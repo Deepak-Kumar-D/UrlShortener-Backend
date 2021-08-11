@@ -1,6 +1,7 @@
 import express from "express";
 import { User } from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 const userRouter = express.Router();
 
@@ -22,6 +23,33 @@ userRouter.post("/signup", async (request, response) => {
 
     const newUser = new User({ fname, lname, email, password, token });
     await newUser.save();
+
+    const sendMail = (fname, lname, email, token) => {
+      let Transport = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: "deepak.kumard36@gmail.com",
+          pass: "Karizmaaa.3611",
+        },
+      });
+
+      let mailOptions = {
+        from: '"URL Shortener" <deepak.kumard36@gmail.com>',
+        to: { name: fname + " " + lname, address: email },
+        subject: "Email Verification",
+        html: `<h3>Click <a href=http://localhost:5000/verify/${token}>here</a> to verify your account.</h3>`,
+      };
+
+      Transport.sendMail(mailOptions, function (error, response) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Verification mail sent!");
+        }
+      });
+    };
+
+    sendMail(fname, lname, email, token);
 
     response.status(201).json({ message: "User added!" });
   } catch (err) {
