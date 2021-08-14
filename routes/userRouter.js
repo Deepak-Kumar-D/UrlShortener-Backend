@@ -2,28 +2,11 @@ import express from "express";
 import { User } from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import bcrypt from "bcrypt";
 
 const userRouter = express.Router();
 
-userRouter.get("/signin", async (request, response) => {
-  const { email, password } = request.body;
-
-  if ((!email, !password)) {
-    return response.status(422).json({ error: "Fill all the fields" });
-  }
-
-  try {
-    const isExist = await User.findOne({ email: email });
-    response.send(isExist);
-  } catch (error) {
-    response.send(error);
-  }
-});
-
-userRouter.get("/test", (req, res) => {
-  res.send("hello");
-});
-
+// Regitering a user and sending a verification email with a token
 userRouter.post("/signup", async (request, response) => {
   const { fname, lname, email, password } = request.body;
 
@@ -79,12 +62,15 @@ userRouter.post("/signup", async (request, response) => {
   }
 });
 
+// Verifying the verification token
 userRouter.get("/verify/:token", async (request, response) => {
   const { token } = request.params;
 
   const user = await User.findOne({ token: token });
 
-  if (user) {
+  if (user.verified) {
+    response.json("Email is already verified!");
+  } else if (user) {
     user.verified = true;
     await user.save();
 
@@ -92,6 +78,39 @@ userRouter.get("/verify/:token", async (request, response) => {
   } else {
     response.json("User not found!");
   }
+});
+
+// User Login
+userRouter.post("/signin", async (request, response) => {
+  const { email, password } = request.body;
+
+  if ((!email, !password)) {
+    return response.status(422).json({ error: "Fill all the fields" });
+  }
+
+  try {
+    const isExist = await User.findOne({ email: email });
+    if (isExist.verified) {
+      const isMatch = await bcrypt.compare(password, isExist.password);
+
+      if (!isMatch) {
+        response.status(400).json({ error: "Invalid Credentials!" });
+      } else {
+        response.json({ message: "Login Succesfull!" });
+      }
+    } else {
+      response
+        .status(400)
+        .json({ error: "Invalid Credentials or Email not verified!" });
+    }
+  } catch (error) {
+    response.send(error);
+  }
+});
+
+//User Logout
+userRouter.get("/signout", async (request, response) => {
+  response.status(200).send("Logged out successfully");
 });
 
 export { userRouter };
