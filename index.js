@@ -4,11 +4,13 @@ import cors from "cors";
 import { router } from "./routes/url.js";
 import { userRouter } from "./routes/userRouter.js";
 import { passRouter } from "./routes/forgotPassword.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
-const url = "mongodb://localhost/urlshortener";
+const url = process.env.MONGODB_URL || "mongodb://localhost/urlshortener";
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const con = mongoose.connection;

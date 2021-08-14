@@ -21,7 +21,7 @@ userRouter.post("/signup", async (request, response) => {
       return response.status(422).json({ error: "Email-Id already exists!" });
     }
 
-    let token = jwt.sign({ _id: User._id }, "THISISASECRETKEY");
+    let token = jwt.sign({ _id: User._id }, process.env.SECRET_KEY);
 
     const newUser = new User({ fname, lname, email, password, token });
     await newUser.save();
@@ -30,13 +30,13 @@ userRouter.post("/signup", async (request, response) => {
       let Transport = nodemailer.createTransport({
         service: "Gmail",
         auth: {
-          user: "dummy.mytestprofile@gmail.com",
-          pass: "Dummyprofile.123",
+          user: process.env.MAIL_USERNAME,
+          pass: process.env.MAIL_PASSWORD,
         },
       });
 
       let mailOptions = {
-        from: '"URL Shortener" <dummy.mytestprofile@gmail.com>',
+        from: '"URL Shortener"' + "<" + process.env.MAIL_USERNAME + ">",
         to: { name: ele.fname + " " + ele.lname, address: ele.email },
         subject: "Email Verification",
         html: `<p>Hi ${ele.fname},</p>\n<h3>Click <a href="http://localhost:3000/verify/${ele.token}">here</a> to verify your account.</h3>\n

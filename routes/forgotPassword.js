@@ -21,7 +21,7 @@ passRouter.post("/forgotpassword", async (request, response) => {
       return response.status(422).json({ error: "Email not valid!" });
     }
 
-    let token = jwt.sign({ _id: isExist._id }, "THISISASECRETKEY");
+    let token = jwt.sign({ _id: isExist._id }, process.env.SECRET_KEY);
 
     const newToken = new Token({ userId: isExist._id, token: token });
 
@@ -31,13 +31,13 @@ passRouter.post("/forgotpassword", async (request, response) => {
       let Transport = nodemailer.createTransport({
         service: "Gmail",
         auth: {
-          user: "dummy.mytestprofile@gmail.com",
-          pass: "Dummyprofile.123",
+          user: process.env.MAIL_USERNAME,
+          pass: process.env.MAIL_PASSWORD,
         },
       });
 
       let mailOptions = {
-        from: '"URL Shortener" <dummy.mytestprofile@gmail.com>',
+        from: '"URL Shortener"' + "<" + process.env.MAIL_USERNAME + ">",
         to: { name: ele.fname + " " + ele.lname, address: email },
         subject: "Password Reset",
         html: `<p>Hi ${ele.fname},</p>\n<h3>Click <a href="http://localhost:3000/resetpassword/${token}">here</a> to reset your account password.</h3>\n
