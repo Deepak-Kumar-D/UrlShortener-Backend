@@ -21,9 +21,6 @@ var corsOptions = { origin: true, credentials: true };
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use("/", (req, res) => {
-  res.send("CHeck");
-});
 app.use("/", router);
 app.use("/", userRouter);
 app.use("/", passRouter);
