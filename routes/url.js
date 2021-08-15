@@ -5,7 +5,7 @@ import { Url } from "../models/UrlModel.js";
 
 const router = express.Router();
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = "https://db-urlshortener.herokuapp.com/";
 
 //Fetch urls
 router.get("/getUrl", async (request, response) => {
@@ -30,7 +30,7 @@ router.post("/shorturl", async (request, response) => {
       if (url) {
         response.json(url);
       } else {
-        const shortUrl = baseUrl + "/" + urlCode;
+        const shortUrl = baseUrl + urlCode;
 
         url = new Url({
           urlCode,
