@@ -40,10 +40,11 @@ passRouter.post("/forgotpassword", async (request, response) => {
         from: '"URL Shortener"' + "<" + process.env.MAIL_USERNAME + ">",
         to: { name: ele.fname + " " + ele.lname, address: email },
         subject: "Password Reset",
-        html: `<p>Hi ${ele.fname},</p>\n<h3>Click <a href="http://localhost:3000/resetpassword/${token}">here</a> to reset your account password.</h3>\n
-                <p style="margin: 0;">Regards,</p>\n
-                <p style="margin: 0;">Url Shortener</p>\n
-                <p style="margin: 0;">India</p>`,
+        html: `<p>Hi ${ele.fname},</p>\n
+        <h3>Click <a href="https://react-urlshortener.netlify.app/resetpassword/${token}">here</a> to reset your account password.</h3>\n
+        <p style="margin: 0;">Regards,</p>\n
+        <p style="margin: 0;">Url Shortener</p>\n
+        <p style="margin: 0;">India</p>`,
       };
 
       Transport.sendMail(mailOptions, function (error, response) {
@@ -78,9 +79,7 @@ passRouter.post("/resetPassword/:token", async (request, response) => {
 
     response.status(201).json({ message: "Password Reset Success!" });
   } else {
-    response
-      .status(422)
-      .json({ error: "Invalid attempt!" + verifyToken + password });
+    response.status(422).json({ error: "Invalid attempt!" });
   }
 });
 

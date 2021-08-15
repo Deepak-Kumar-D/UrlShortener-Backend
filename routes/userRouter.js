@@ -39,7 +39,7 @@ userRouter.post("/signup", async (request, response) => {
         from: '"URL Shortener"' + "<" + process.env.MAIL_USERNAME + ">",
         to: { name: ele.fname + " " + ele.lname, address: ele.email },
         subject: "Email Verification",
-        html: `<p>Hi ${ele.fname},</p>\n<h3>Click <a href="http://localhost:3000/verify/${ele.token}">here</a> to verify your account.</h3>\n
+        html: `<p>Hi ${ele.fname},</p>\n<h3>Click <a href="https://react-urlshortener.netlify.app/verify/${ele.token}">here</a> to verify your account.</h3>\n
         <p style="margin: 0;">Regards,</p>\n
         <p style="margin: 0;">Url Shortener</p>\n
         <p style="margin: 0;">India</p>`,
