@@ -96,6 +96,7 @@ userRouter.post("/signin", async (request, response) => {
       if (!isMatch) {
         response.status(400).json({ error: "Invalid Credentials!" });
       } else {
+        // localStorage.setItem("token", isExist.token);
         response.json({ message: "Login Succesfull!" });
       }
     } else {
