@@ -1,5 +1,6 @@
 import express from "express";
 import { User } from "../models/UserModel.js";
+import { Token } from "../models/TokenModel.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
@@ -96,8 +97,19 @@ userRouter.post("/signin", async (request, response) => {
       if (!isMatch) {
         response.status(400).json({ error: "Invalid Credentials!" });
       } else {
-        // localStorage.setItem("token", isExist.token);
-        response.json({ message: "Login Succesfull!" });
+        const token = jwt.sign("urlshortener", process.env.SECRET_KEY);
+
+        response.cookie("cookietoken", token, {
+          expires: new Date(Date.now() + 1800000),
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        });
+
+        const newToken = new Token({ userId: isExist._id, token: token });
+        newToken.save();
+
+        response.status(200).json({ message: "Login Succesfull!" });
       }
     } else {
       response
@@ -110,8 +122,12 @@ userRouter.post("/signin", async (request, response) => {
 });
 
 //User Logout
-userRouter.get("/signout", async (request, response) => {
-  response.status(200).send("Logged out successfully");
+userRouter.post("/signout", async (request, response) => {
+  const cookieToken = request.cookies.cookietoken;
+  await Token.findOneAndRemove({ token: cookieToken }); //Removing the cookie that was saved in the DB while signing in
+
+  response.clearCookie("cookietoken", { path: "token" }); //Removing the cookie that was created while signing in
+  response.status(200).json("Logged out successfully");
 });
 
 export { userRouter };

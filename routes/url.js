@@ -69,75 +69,78 @@ router.get("/:code", async (request, response) => {
   }
 });
 
-// Cuurent Date
+// Documents that were created on current date
 router.post("/currdate", async (req, res) => {
   try {
     var newDate = new Date();
     var start = new Date(newDate.setHours(0, 0, 0));
     var end = new Date(newDate.setHours(23, 59, 59));
 
-    // var ms = new Date(newDate.setMonth(0));
-    // var me = new Date(newDate.setMonth(11));
-
     const curr = await Url.find({
       date: { $gte: start, $lt: end },
     });
 
-    // const mon = await Url.find({
-    //   date: { $gte: ms, $lt: me },
-    // });
-
-    // const check = await Url.aggregate([
-    //   { $project: { month: { $month: "$date" } } },
-    // ]);
-
     res.status(200).send(curr);
   } catch (err) {
-    response.status(422).json("Error");
+    res.status(422).json("Error");
   }
 });
 
+// Documents that were created on current month(Under contsruction)
 router.post("/month", async (req, res) => {
   try {
     var newDate = new Date();
     // var start = new Date(newDate.now());
     // var end = new Date(newDate.setDate());
 
+    // console.log(newDate.getMonth() + 1);
+    // var daysInMonth = new Date(
+    //   newDate.getFullYear(),
+    //   newDate.getMonth() + 1,
+    //   0
+    // ).getDate();
+    // console.log(daysInMonth);
+
+    // var first = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+    // var last = new Date(newDate.getFullYear(), newDate.getMonth() + 1, 0);
+
+    // console.log(first);
+    // console.log(last);
+
     var d1 = new Date("Jan 01, 2021 12:10:10"); //mm dd, yyyy hh:mm:ss
     var d2 = new Date("Dec 30, 2021 12:10:30"); //mm dd, yyyy hh:mm:ss
 
-    var ms = new Date(newDate.setMonth(0));
-    var me = new Date(newDate.setMonth(11));
+    // var ms = new Date(newDate.setMonth(0));
+    // var me = new Date(newDate.setMonth(11));
 
-    const today = new Date();
-    today.toLocaleString("default", { month: "long" });
-    // console.log(today);
+    // const dd = newDate.getDate();
+    // const mm = newDate.getMonth() + 1;
+    // const yyyy = newDate.getFullYear();
+    // const today = dd + "/" + mm + "/" + yyyy;
 
     const curr = await Url.find({
       date: { $gte: d1, $lt: d2 },
     });
 
-    const data = await Url.aggregate([
-      {
-        $project: {
-          date: "$date",
-          year: { $year: "$date" },
-          month: { $month: "$date" },
-        },
-      },
-    ]);
+    // const trial1 = await Url.aggregate([
+    //   {
+    //     $project: {
+    //       month: { $month: "$date" },
+    //     },
+    //   },
+    // ]);
 
-    console.log(data);
-
-    // const mon = await Url.find({
-    //   date: { $gte: ms, $lt: me },
-    // });
+    // console.log(dd);
+    // console.log(mm);
+    // console.log(yyyy);
+    // console.log(today);
+    // console.log(trial1);
 
     // const check = await Url.aggregate([
     //   { $project: { month: { $month: "$date" } } },
     // ]);
     // console.log(curr);
-    // res.status(200).send();
+    res.status(200).send(curr);
   } catch (err) {
     res.status(422).json("Error");
   }
